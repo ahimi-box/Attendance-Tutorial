@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  # remember_tokenという仮想の属性を作成します。
+  # 「remember_token」という仮想の属性を作成します。
   attr_accessor :remember_token
   before_save { self.email = email.downcase } #大文字小文字を区別せず、小文字として登録
   
@@ -7,25 +7,26 @@ class User < ApplicationRecord
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i #正規表現
   validates :email, presence: true, length: { maximum: 100 },format: {with: VALID_EMAIL_REGEX },uniqueness: true #空はダメ、文字数は100文字以下
   has_secure_password #パスワードのハッシュ化
-  validates :password, presence: true, length: { minimum: 6 }# 最小文字数6文字以上
-
-  #渡された文字列のハッシュ値を返します。
+  validates :password, presence: true, length: { minimum: 6 }, allow_nil: true# 最小文字数6文字以上
+  
+  
+  # 渡された文字列のハッシュ値を返します。
   def User.digest(string)
-    cost =
+    cost = 
       if ActiveModel::SecurePassword.min_cost
         BCrypt::Engine::MIN_COST
       else
         BCrypt::Engine.cost
       end
-      BCrypt::Password.create(string, cost: cost)
+    BCrypt::Password.create(string, cost: cost)
   end
   
-  # ランダムなトークンを返します。
+   # ランダムなトークンを返します。
   def User.new_token
     SecureRandom.urlsafe_base64
   end
   
-  # 永続セッションのためハッシュ化したトークンをデータベースに記憶します。
+   # 永続セッションのためハッシュ化したトークンをデータベースに記憶します。
   def remember
     self.remember_token = User.new_token
     update_attribute(:remember_digest, User.digest(remember_token))
@@ -40,7 +41,8 @@ class User < ApplicationRecord
   
   # ユーザーのログイン情報を破棄します。
   def forget
-    update_attribute(:remember_digest,nil)
+    update_attribute(:remember_digest, nil)
   end
+  
   
 end
