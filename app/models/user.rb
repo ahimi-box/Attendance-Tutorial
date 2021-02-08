@@ -6,6 +6,9 @@ class User < ApplicationRecord
   validates :name, presence: true, length: { maximum: 50 } #空はダメ、文字数は50文字以下
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i #正規表現
   validates :email, presence: true, length: { maximum: 100 },format: {with: VALID_EMAIL_REGEX },uniqueness: true #空はダメ、文字数は100文字以下
+  validates :department, length: { in: 2..30 }, allow_blank: true
+  validates :basic_time, presence: true
+  validates :work_time, presence: true
   has_secure_password #パスワードのハッシュ化
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true# 最小文字数6文字以上
   
